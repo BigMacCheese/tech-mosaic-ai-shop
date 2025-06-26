@@ -61,12 +61,12 @@ const FilterSidebar = ({
               <Building className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm font-medium">Company</span>
             </div>
-            <Select value={selectedCompany || ""} onValueChange={(value) => onCompanySelect(value || null)}>
+            <Select value={selectedCompany || "all"} onValueChange={(value) => onCompanySelect(value === "all" ? null : value)}>
               <SelectTrigger className="glass-effect border-primary/30">
                 <SelectValue placeholder="All Companies" />
               </SelectTrigger>
               <SelectContent className="glass-effect border-primary/30">
-                <SelectItem value="">All Companies</SelectItem>
+                <SelectItem value="all">All Companies</SelectItem>
                 {companies.map((company) => (
                   <SelectItem key={company} value={company}>
                     {company}
