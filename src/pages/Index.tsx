@@ -48,7 +48,7 @@ const Index = () => {
       <header className="py-8 px-6">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-5xl font-bold mb-4 tech-gradient bg-clip-text text-transparent">
-            TechMosaic
+            TechStock
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
             Discover the Future of Technology
@@ -120,7 +120,7 @@ const Index = () => {
       />
 
       {/* Floating AI Assistant Button */}
-      <AIAssistantButton />
+      <AIAssistantButton selectedProduct={selectedProduct} />
     </div>
   );
 };
