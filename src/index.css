@@ -16,7 +16,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 199 89% 48%;
+    --primary: 25 95% 53%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -25,7 +25,7 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 199 89% 48%;
+    --accent: 45 93% 47%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -33,18 +33,18 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 199 89% 48%;
+    --ring: 25 95% 53%;
 
     --radius: 0.5rem;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary: 25 95% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 199 89% 48%;
+    --sidebar-ring: 25 95% 53%;
   }
 }
 
@@ -83,11 +83,11 @@
   }
 
   .neon-glow {
-    box-shadow: 0 0 20px rgba(8, 145, 178, 0.3);
+    box-shadow: 0 0 20px rgba(251, 146, 60, 0.3);
   }
 
   .tech-gradient {
-    background: linear-gradient(135deg, hsl(199 89% 48%) 0%, hsl(280 100% 70%) 100%);
+    background: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(45 93% 47%) 100%);
   }
 }
 
