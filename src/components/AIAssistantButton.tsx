@@ -110,7 +110,7 @@ const AIAssistantButton = ({ selectedProduct }: AIAssistantButtonProps) => {
   return (
     <>
       {/* Main AI Assistant Button */}
-      <div className="fixed bottom-6 right-6 z-[60]">
+      <div className="fixed bottom-6 right-6 z-[70]">
         <Button
           onClick={toggleAssistant}
           className={`rounded-full w-14 h-14 shadow-lg transition-all duration-300 ${
@@ -129,7 +129,7 @@ const AIAssistantButton = ({ selectedProduct }: AIAssistantButtonProps) => {
 
       {/* Voice Interface */}
       {isActive && (
-        <div className="fixed bottom-24 right-6 z-[60]">
+        <div className="fixed bottom-24 right-6 z-[70]">
           <div className="glass-effect border border-primary/30 rounded-lg p-4 w-80 max-h-96 overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-primary">AI Assistant</h3>
@@ -168,7 +168,7 @@ const AIAssistantButton = ({ selectedProduct }: AIAssistantButtonProps) => {
 
       {/* Product Recommendations */}
       {showRecommendations && selectedProduct && (
-        <div className="fixed bottom-24 left-6 z-[60]">
+        <div className="fixed bottom-24 left-6 z-[70]">
           <div className="glass-effect border border-primary/30 rounded-lg p-4 w-72">
             <h3 className="text-lg font-semibold text-primary mb-3">
               Recommended for you
