@@ -25,7 +25,7 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto glass-effect border-primary/30 z-30">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto glass-effect border-primary/30 z-50">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-primary">
             {product.name}

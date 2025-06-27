@@ -1,56 +1,59 @@
 
-import { Bot, Mic, MicOff, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useState, useEffect, useRef } from "react";
-import { mockProducts, Product } from "@/data/mockProducts";
+import { Mic, MicOff, MessageCircle, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+interface Product {
+  id: number;
+  name: string;
+  company: string;
+  price: number;
+  image: string;
+  category: string;
+  stock: number;
+  description: string;
+}
 
 interface AIAssistantButtonProps {
-  selectedProduct?: Product | null;
+  selectedProduct: Product | null;
 }
 
 const AIAssistantButton = ({ selectedProduct }: AIAssistantButtonProps) => {
   const [isActive, setIsActive] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
-  const [recommendations, setRecommendations] = useState<Product[]>([]);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
-    // Initialize speech recognition
-    if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    // Check if browser supports speech recognition
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    
+    if (SpeechRecognition) {
       recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
       
-      if (recognitionRef.current) {
-        recognitionRef.current.continuous = true;
-        recognitionRef.current.interimResults = true;
-        recognitionRef.current.lang = 'en-US';
-        
-        recognitionRef.current.onresult = (event) => {
-          let finalTranscript = '';
-          
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            if (event.results[i].isFinal) {
-              finalTranscript += event.results[i][0].transcript;
-            }
+      recognitionRef.current.onresult = (event: any) => {
+        let finalTranscript = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
           }
-          
-          if (finalTranscript) {
-            setTranscript(prev => prev + finalTranscript + ' ');
-            console.log('Voice input:', finalTranscript);
-          }
-        };
+        }
+        if (finalTranscript) {
+          setTranscript(prev => prev + " " + finalTranscript);
+        }
+      };
 
-        recognitionRef.current.onerror = (event) => {
-          console.error('Speech recognition error:', event.error);
-          setIsListening(false);
-        };
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      };
 
-        recognitionRef.current.onend = () => {
-          setIsListening(false);
-        };
-      }
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
     }
 
     return () => {
@@ -61,36 +64,29 @@ const AIAssistantButton = ({ selectedProduct }: AIAssistantButtonProps) => {
   }, []);
 
   useEffect(() => {
-    // Generate recommendations when a product is selected and AI is active
     if (selectedProduct && isActive) {
-      const relatedProducts = mockProducts
-        .filter(p => 
-          p.id !== selectedProduct.id && 
-          (p.category === selectedProduct.category || p.company === selectedProduct.company)
-        )
-        .slice(0, 3);
-      setRecommendations(relatedProducts);
+      setShowRecommendations(true);
     } else {
-      setRecommendations([]);
+      setShowRecommendations(false);
     }
   }, [selectedProduct, isActive]);
 
-  const toggleAI = () => {
+  const toggleAssistant = () => {
     setIsActive(!isActive);
     if (isActive) {
-      // Deactivate AI
-      if (recognitionRef.current && isListening) {
-        recognitionRef.current.stop();
-      }
+      // Deactivate everything
       setIsListening(false);
       setTranscript("");
-      setRecommendations([]);
+      setShowRecommendations(false);
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
     }
   };
 
-  const toggleMicrophone = () => {
+  const toggleListening = () => {
     if (!recognitionRef.current) {
-      console.warn('Speech recognition not supported');
+      alert("Speech recognition not supported in this browser");
       return;
     }
 
@@ -103,125 +99,94 @@ const AIAssistantButton = ({ selectedProduct }: AIAssistantButtonProps) => {
     }
   };
 
-  const clearTranscript = () => {
-    setTranscript("");
-  };
+  const mockRecommendations = selectedProduct 
+    ? [
+        { id: 999, name: `Premium ${selectedProduct.category} Alternative`, price: selectedProduct.price + 200 },
+        { id: 998, name: `Budget ${selectedProduct.category} Option`, price: selectedProduct.price - 150 },
+        { id: 997, name: `${selectedProduct.company} Upgraded Model`, price: selectedProduct.price + 300 },
+      ]
+    : [];
 
   return (
     <>
       {/* Main AI Assistant Button */}
-      <div className="fixed bottom-6 left-6 z-50">
+      <div className="fixed bottom-6 right-6 z-[60]">
         <Button
-          size="lg"
-          className={`h-16 w-16 rounded-full tech-gradient hover:opacity-90 transition-all duration-300 animate-float shadow-2xl neon-glow ${
-            isActive ? 'ring-4 ring-primary/50' : ''
+          onClick={toggleAssistant}
+          className={`rounded-full w-14 h-14 shadow-lg transition-all duration-300 ${
+            isActive 
+              ? 'tech-gradient hover:opacity-90' 
+              : 'bg-primary hover:bg-primary/90'
           }`}
-          onClick={toggleAI}
         >
-          <Bot className={`h-8 w-8 text-white ${isActive ? 'animate-pulse-slow' : ''}`} />
+          {isActive ? (
+            <X className="h-6 w-6 text-white" />
+          ) : (
+            <MessageCircle className="h-6 w-6 text-white" />
+          )}
         </Button>
       </div>
 
-      {/* AI Assistant Interface */}
+      {/* Voice Interface */}
       {isActive && (
-        <div className="fixed bottom-24 left-6 z-40 w-80">
-          <Card className="glass-effect border-primary/30 p-4 shadow-2xl animate-scale-in">
-            <div className="space-y-4">
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Bot className="h-5 w-5 text-primary animate-pulse-slow" />
-                  <span className="font-semibold text-primary">AI Assistant Active</span>
-                </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-6 w-6 p-0 hover:bg-primary/20"
-                  onClick={toggleAI}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {/* Voice Controls */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Voice Input</span>
-                  <Button
-                    size="sm"
-                    variant={isListening ? "destructive" : "default"}
-                    className="tech-gradient"
-                    onClick={toggleMicrophone}
-                  >
-                    {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                    {isListening ? "Stop" : "Listen"}
-                  </Button>
-                </div>
-
-                {/* Transcript Display */}
-                {transcript && (
-                  <div className="glass-effect border-primary/20 rounded p-3 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">Transcript:</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-5 w-5 p-0 text-xs"
-                        onClick={clearTranscript}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                    <p className="text-sm text-foreground max-h-20 overflow-y-auto">
-                      {transcript}
-                    </p>
-                  </div>
+        <div className="fixed bottom-24 right-6 z-[60]">
+          <div className="glass-effect border border-primary/30 rounded-lg p-4 w-80 max-h-96 overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-primary">AI Assistant</h3>
+              <Button
+                onClick={toggleListening}
+                variant="outline"
+                size="sm"
+                className={`${
+                  isListening 
+                    ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' 
+                    : 'border-primary/30'
+                }`}
+              >
+                {isListening ? (
+                  <MicOff className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
                 )}
-
-                {/* Listening Indicator */}
-                {isListening && (
-                  <div className="flex items-center gap-2 text-sm text-primary">
-                    <div className="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
-                    Listening...
-                  </div>
-                )}
-              </div>
+              </Button>
             </div>
-          </Card>
+            
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                {isListening ? "Listening..." : "Click the microphone to start"}
+              </p>
+              {transcript && (
+                <div className="bg-secondary/20 rounded p-2">
+                  <p className="text-sm font-medium mb-1">Transcript:</p>
+                  <p className="text-sm">{transcript}</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
       {/* Product Recommendations */}
-      {isActive && recommendations.length > 0 && (
-        <div className="fixed bottom-6 right-6 z-40 w-72">
-          <Card className="glass-effect border-primary/30 p-4 shadow-2xl animate-scale-in">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Bot className="h-4 w-4 text-primary" />
-                <span className="font-semibold text-sm">AI Recommendations</span>
-              </div>
-              
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {recommendations.map((product) => (
-                  <div
-                    key={product.id}
-                    className="flex items-center gap-3 p-2 glass-effect border-primary/20 rounded cursor-pointer hover:bg-primary/10 transition-colors"
-                    onClick={() => console.log('Recommended product clicked:', product.name)}
-                  >
-                    <img
-                      src={`https://images.unsplash.com/${product.image}?w=40&h=40&fit=crop`}
-                      alt={product.name}
-                      className="w-10 h-10 rounded object-cover"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{product.name}</p>
-                      <p className="text-xs text-muted-foreground">${product.price}</p>
-                    </div>
+      {showRecommendations && selectedProduct && (
+        <div className="fixed bottom-24 left-6 z-[60]">
+          <div className="glass-effect border border-primary/30 rounded-lg p-4 w-72">
+            <h3 className="text-lg font-semibold text-primary mb-3">
+              Recommended for you
+            </h3>
+            <div className="space-y-2">
+              {mockRecommendations.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center p-2 hover:bg-secondary/20 rounded cursor-pointer"
+                >
+                  <div>
+                    <p className="text-sm font-medium">{item.name}</p>
+                    <p className="text-xs text-muted-foreground">${item.price}</p>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          </Card>
+          </div>
         </div>
       )}
     </>
