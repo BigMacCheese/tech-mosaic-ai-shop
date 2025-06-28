@@ -48,6 +48,15 @@ declare global {
       new (): SpeechRecognition;
     };
   }
+  
+  // Declare SpeechRecognition as a global type
+  const SpeechRecognition: {
+    new (): SpeechRecognition;
+  };
+  
+  const webkitSpeechRecognition: {
+    new (): SpeechRecognition;
+  };
 }
 
 export {};

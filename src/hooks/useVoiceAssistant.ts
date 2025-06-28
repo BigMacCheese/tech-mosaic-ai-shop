@@ -16,8 +16,8 @@ export const useVoiceAssistant = (selectedProduct?: Product | null) => {
       return null;
     }
 
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
+    const SpeechRecognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognitionConstructor();
     
     recognition.continuous = false;
     recognition.interimResults = false;
@@ -28,7 +28,7 @@ export const useVoiceAssistant = (selectedProduct?: Product | null) => {
       setIsListening(true);
     };
 
-    recognition.onresult = async (event: any) => {
+    recognition.onresult = async (event: SpeechRecognitionEvent) => {
       const transcript = event.results[0][0].transcript;
       console.log('Speech recognized:', transcript);
       setTranscript(transcript);
@@ -38,7 +38,7 @@ export const useVoiceAssistant = (selectedProduct?: Product | null) => {
       await sendToGemini(transcript);
     };
 
-    recognition.onerror = (event: any) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       console.error('Speech recognition error:', event.error);
       setIsListening(false);
     };
