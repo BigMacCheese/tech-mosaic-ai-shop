@@ -2,6 +2,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Product } from './useProducts';
+import type { SpeechRecognition, SpeechRecognitionEvent, SpeechRecognitionErrorEvent } from '@/types/speech-recognition';
 
 export const useVoiceAssistant = (selectedProduct?: Product | null) => {
   const [isListening, setIsListening] = useState(false);
