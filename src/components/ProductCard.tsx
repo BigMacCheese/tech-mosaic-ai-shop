@@ -2,17 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Package, DollarSign } from "lucide-react";
-
-interface Product {
-  id: number;
-  name: string;
-  company: string;
-  price: number;
-  image: string;
-  category: string;
-  stock: number;
-  description: string;
-}
+import { Product } from "@/hooks/useProducts";
 
 interface ProductCardProps {
   product: Product;
@@ -28,7 +18,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
       <CardContent className="p-0">
         <div className="aspect-square overflow-hidden rounded-t-lg">
           <img
-            src={`https://images.unsplash.com/${product.image}?w=400&h=400&fit=crop`}
+            src={product.image_url || `https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop`}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
             loading="lazy"
@@ -57,7 +47,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
             variant="outline" 
             className="text-xs border-primary/30 text-primary/80"
           >
-            {product.category}
+            {product.type}
           </Badge>
         </div>
       </CardContent>

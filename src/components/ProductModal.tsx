@@ -3,17 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DollarSign, Package, Building, ShoppingCart } from "lucide-react";
-
-interface Product {
-  id: number;
-  name: string;
-  company: string;
-  price: number;
-  image: string;
-  category: string;
-  stock: number;
-  description: string;
-}
+import { Product } from "@/hooks/useProducts";
 
 interface ProductModalProps {
   product: Product | null;
@@ -38,7 +28,7 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
           <div className="space-y-4">
             <div className="aspect-square overflow-hidden rounded-lg border border-primary/20">
               <img
-                src={`https://images.unsplash.com/${product.image}?w=600&h=600&fit=crop`}
+                src={product.image_url || `https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=600&fit=crop`}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -57,7 +47,7 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
                 variant="outline" 
                 className="border-primary/30 text-primary"
               >
-                {product.category}
+                {product.type}
               </Badge>
             </div>
 
@@ -65,6 +55,13 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
               <h3 className="text-lg font-semibold">Descripción</h3>
               <p className="text-muted-foreground leading-relaxed">
                 {product.description}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Características</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                {product.features}
               </p>
             </div>
 
