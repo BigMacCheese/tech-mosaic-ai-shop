@@ -49,7 +49,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
             </div>
             <div className="flex items-center gap-1">
               <Package className="h-3 w-3 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">{product.stock} left</span>
+              <span className="text-xs text-muted-foreground">{product.stock} disponibles</span>
             </div>
           </div>
           

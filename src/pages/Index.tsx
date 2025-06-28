@@ -51,7 +51,7 @@ const Index = () => {
             TechStock
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Discover the Future of Technology
+            Descubre el Futuro de la Tecnología
           </p>
           
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
@@ -84,7 +84,7 @@ const Index = () => {
           <section className="flex-1">
             <div className="mb-6">
               <p className="text-muted-foreground">
-                Showing {filteredProducts.length} products
+                Mostrando {filteredProducts.length} productos
               </p>
             </div>
             
@@ -101,9 +101,9 @@ const Index = () => {
             {filteredProducts.length === 0 && (
               <div className="text-center py-12">
                 <div className="glass-effect border-primary/20 rounded-lg p-8 max-w-md mx-auto">
-                  <h3 className="text-xl font-semibold mb-4">No products found</h3>
+                  <h3 className="text-xl font-semibold mb-4">No se encontraron productos</h3>
                   <p className="text-muted-foreground">
-                    Try adjusting your search criteria or filters to find what you're looking for.
+                    Intenta ajustar tus criterios de búsqueda o filtros para encontrar lo que busces.
                   </p>
                 </div>
               </div>

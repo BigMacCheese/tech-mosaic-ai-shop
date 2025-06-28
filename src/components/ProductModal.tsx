@@ -1,3 +1,4 @@
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,7 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto glass-effect border-primary/30 z-50">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto glass-effect border-primary/30 z-[60]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-primary">
             {product.name}
@@ -61,7 +62,7 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Description</h3>
+              <h3 className="text-lg font-semibold">Descripción</h3>
               <p className="text-muted-foreground leading-relaxed">
                 {product.description}
               </p>
@@ -76,7 +77,7 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
                 <div className="flex items-center gap-2">
                   <Package className="h-5 w-5 text-muted-foreground" />
                   <span className="text-lg">
-                    <span className="font-semibold">{product.stock}</span> in stock
+                    <span className="font-semibold">{product.stock}</span> en stock
                   </span>
                 </div>
               </div>
@@ -86,7 +87,7 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
                 disabled={product.stock === 0}
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
-                {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
+                {product.stock > 0 ? "Agregar al Carrito" : "Agotado"}
               </Button>
             </div>
           </div>

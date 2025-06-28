@@ -19,7 +19,7 @@ const CategoryFilters = ({ categories, selectedCategory, onCategorySelect }: Cat
         }`}
         onClick={() => onCategorySelect(null)}
       >
-        All Categories
+        Todas las Categorías
       </Badge>
       {categories.map((category) => (
         <Badge

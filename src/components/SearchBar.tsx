@@ -14,7 +14,7 @@ const SearchBar = ({ value, onChange }: SearchBarProps) => {
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
         <Input
           type="text"
-          placeholder="Search for cutting-edge technology..."
+          placeholder="Busca tecnología de vanguardia..."
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="pl-12 pr-4 py-4 text-lg glass-effect border-primary/30 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 neon-glow"

@@ -1,6 +1,6 @@
 
-import { useState, useEffect, useRef } from "react";
-import { Mic, MicOff, MessageCircle, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Product {
@@ -20,48 +20,7 @@ interface AIAssistantButtonProps {
 
 const AIAssistantButton = ({ selectedProduct }: AIAssistantButtonProps) => {
   const [isActive, setIsActive] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
   const [showRecommendations, setShowRecommendations] = useState(false);
-  const recognitionRef = useRef<any>(null);
-
-  useEffect(() => {
-    // Check if browser supports speech recognition
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    
-    if (SpeechRecognition) {
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-      
-      recognitionRef.current.onresult = (event: any) => {
-        let finalTranscript = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
-          }
-        }
-        if (finalTranscript) {
-          setTranscript(prev => prev + " " + finalTranscript);
-        }
-      };
-
-      recognitionRef.current.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
-        setIsListening(false);
-      };
-
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-      };
-    }
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (selectedProduct && isActive) {
@@ -74,28 +33,7 @@ const AIAssistantButton = ({ selectedProduct }: AIAssistantButtonProps) => {
   const toggleAssistant = () => {
     setIsActive(!isActive);
     if (isActive) {
-      // Deactivate everything
-      setIsListening(false);
-      setTranscript("");
       setShowRecommendations(false);
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-    }
-  };
-
-  const toggleListening = () => {
-    if (!recognitionRef.current) {
-      alert("Speech recognition not supported in this browser");
-      return;
-    }
-
-    if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    } else {
-      recognitionRef.current.start();
-      setIsListening(true);
     }
   };
 
@@ -103,19 +41,19 @@ const AIAssistantButton = ({ selectedProduct }: AIAssistantButtonProps) => {
     ? [
         { 
           id: 999, 
-          name: `Premium ${selectedProduct.category} Alternative`, 
+          name: `Alternativa Premium ${selectedProduct.category}`, 
           price: selectedProduct.price + 200,
           image: "photo-1488590528505-98d2b5aba04b"
         },
         { 
           id: 998, 
-          name: `Budget ${selectedProduct.category} Option`, 
+          name: `Opción Económica ${selectedProduct.category}`, 
           price: selectedProduct.price - 150,
           image: "photo-1518770660439-4636190af475"
         },
         { 
           id: 997, 
-          name: `${selectedProduct.company} Upgraded Model`, 
+          name: `${selectedProduct.company} Modelo Mejorado`, 
           price: selectedProduct.price + 300,
           image: "photo-1531297484001-80022131f5a1"
         },
@@ -147,35 +85,16 @@ const AIAssistantButton = ({ selectedProduct }: AIAssistantButtonProps) => {
         <div className="fixed top-24 left-6 z-[70]">
           <div className="glass-effect border border-primary/30 rounded-lg p-4 w-80 max-h-96 overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-primary">AI Assistant</h3>
-              <Button
-                onClick={toggleListening}
-                variant="outline"
-                size="sm"
-                className={`${
-                  isListening 
-                    ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' 
-                    : 'border-primary/30'
-                }`}
-              >
-                {isListening ? (
-                  <MicOff className="h-4 w-4" />
-                ) : (
-                  <Mic className="h-4 w-4" />
-                )}
-              </Button>
+              <h3 className="text-lg font-semibold text-primary">Asistente IA</h3>
             </div>
             
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
-                {isListening ? "Listening..." : "Click the microphone to start"}
+                ¡Hola! Cuéntame, ¿cómo puedo ayudarte?
               </p>
-              {transcript && (
-                <div className="bg-secondary/20 rounded p-2">
-                  <p className="text-sm font-medium mb-1">Transcript:</p>
-                  <p className="text-sm">{transcript}</p>
-                </div>
-              )}
+              <p className="text-xs text-muted-foreground">
+                Puedes preguntarme sobre productos, obtener recomendaciones o resolver dudas sobre tecnología.
+              </p>
             </div>
           </div>
         </div>
@@ -186,7 +105,7 @@ const AIAssistantButton = ({ selectedProduct }: AIAssistantButtonProps) => {
         <div className="fixed top-24 right-6 z-[70]">
           <div className="glass-effect border border-primary/30 rounded-lg p-4 w-80">
             <h3 className="text-lg font-semibold text-primary mb-3">
-              Recommended for you
+              Recomendado para ti
             </h3>
             <div className="space-y-3">
               {mockRecommendations.map((item) => (
