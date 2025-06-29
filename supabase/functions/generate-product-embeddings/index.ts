@@ -21,10 +21,12 @@ serve(async (req) => {
       throw new Error('OPENAI_API_KEY no está configurada');
     }
 
+    console.log('Starting embedding generation process...');
+
     // Create Supabase client with service role key for admin access
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { productId } = await req.json();
+    const { productId } = await req.json() || {};
 
     let products;
     
@@ -38,35 +40,46 @@ serve(async (req) => {
 
       if (error) throw error;
       products = [data];
+      console.log(`Processing single product: ${data.name}`);
     } else {
-      // Generate embeddings for all products
+      // Generate embeddings for all products without embeddings
       const { data, error } = await supabase
         .from('products')
-        .select('*');
+        .select('*')
+        .is('embedding', null);
 
       if (error) throw error;
       products = data;
+      console.log(`Found ${products.length} products without embeddings`);
     }
 
-    console.log(`Processing ${products.length} products for embeddings`);
+    if (!products || products.length === 0) {
+      return new Response(
+        JSON.stringify({ 
+          message: 'No products found that need embeddings',
+          processedCount: 0,
+          errorCount: 0,
+          totalProducts: 0
+        }),
+        { 
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json' 
+          } 
+        }
+      );
+    }
 
     let processedCount = 0;
     let errorCount = 0;
 
     for (const product of products) {
       try {
-        // Create a comprehensive text representation of the product
-        const productText = `
-          Nombre: ${product.name}
-          Empresa: ${product.company}
-          Tipo: ${product.type}
-          Descripción: ${product.description}
-          Características: ${product.features}
-          Precio: $${product.price}
-          Stock: ${product.stock} unidades disponibles
-        `.trim();
+        // Create a comprehensive text representation following the exact format requested
+        const productText = `name: ${product.name}, company: ${product.company}, type: ${product.type}, description: ${product.description}, features: ${product.features}, stock: ${product.stock}, price: ${product.price}`;
 
         console.log(`Generating embedding for product: ${product.name}`);
+        console.log(`Product text: ${productText.substring(0, 100)}...`);
 
         // Generate embedding using OpenAI
         const embeddingResponse = await fetch('https://api.openai.com/v1/embeddings', {
@@ -83,17 +96,24 @@ serve(async (req) => {
         });
 
         if (!embeddingResponse.ok) {
-          throw new Error(`OpenAI API error: ${embeddingResponse.status}`);
+          const errorText = await embeddingResponse.text();
+          console.error(`OpenAI API error for product ${product.id}:`, errorText);
+          throw new Error(`OpenAI API error: ${embeddingResponse.status} - ${errorText}`);
         }
 
         const embeddingData = await embeddingResponse.json();
         const embedding = embeddingData.data[0].embedding;
 
+        console.log(`Generated embedding with ${embedding.length} dimensions for ${product.name}`);
+
+        // Convert the embedding array to the format expected by pgvector
+        const embeddingString = `[${embedding.join(',')}]`;
+
         // Update the product with the embedding
         const { error: updateError } = await supabase
           .from('products')
           .update({ 
-            embedding: `[${embedding.join(',')}]`,
+            embedding: embeddingString,
             updated_at: new Date().toISOString()
           })
           .eq('id', product.id);
@@ -107,13 +127,15 @@ serve(async (req) => {
         }
 
         // Add a small delay to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 200));
 
       } catch (error) {
         console.error(`Error processing product ${product.id}:`, error);
         errorCount++;
       }
     }
+
+    console.log(`Embedding generation completed. Processed: ${processedCount}, Errors: ${errorCount}`);
 
     return new Response(
       JSON.stringify({ 

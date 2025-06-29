@@ -2,9 +2,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, TrendingUp, DollarSign, Zap, Info } from "lucide-react";
+import { Loader2, TrendingUp, DollarSign, Zap, Info, AlertCircle } from "lucide-react";
 import { useProductRecommendations, ProductRecommendation } from "@/hooks/useProductRecommendations";
 import { Product } from "@/hooks/useProducts";
+import { useProductEmbeddings } from "@/hooks/useProductEmbeddings";
 
 interface ProductRecommendationsProps {
   productId: string | null;
@@ -13,29 +14,60 @@ interface ProductRecommendationsProps {
 
 const ProductRecommendations = ({ productId, onProductClick }: ProductRecommendationsProps) => {
   const { data, isLoading, error } = useProductRecommendations(productId);
+  const { generateEmbeddings, isGenerating } = useProductEmbeddings();
 
   if (!productId) return null;
 
-  if (isLoading) {
+  if (isLoading || isGenerating) {
     return (
       <div className="w-full max-w-4xl mx-auto p-6">
         <div className="flex items-center justify-center space-x-2 mb-6">
           <Loader2 className="h-5 w-5 animate-spin" />
-          <span className="text-muted-foreground">Generando recomendaciones personalizadas...</span>
+          <span className="text-muted-foreground">
+            {isGenerating ? "Generando embeddings..." : "Generando recomendaciones personalizadas..."}
+          </span>
         </div>
       </div>
     );
   }
 
   if (error) {
+    const isEmbeddingError = error.message.includes('embedding') || error.message.includes('vector');
+    
     return (
       <div className="w-full max-w-4xl mx-auto p-6">
-        <Card className="border-destructive/50">
+        <Card className="border-amber-500/50">
           <CardContent className="p-6 text-center">
-            <p className="text-destructive">Error al cargar recomendaciones</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Intenta recargar la página o selecciona otro producto
-            </p>
+            <AlertCircle className="h-8 w-8 mx-auto mb-4 text-amber-500" />
+            {isEmbeddingError ? (
+              <>
+                <p className="text-amber-700 mb-4">Los embeddings aún no están disponibles para este producto</p>
+                <Button 
+                  onClick={() => generateEmbeddings({})}
+                  disabled={isGenerating}
+                  className="mb-2"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Generando...
+                    </>
+                  ) : (
+                    "Generar Embeddings"
+                  )}
+                </Button>
+                <p className="text-sm text-muted-foreground">
+                  Una vez generados, las recomendaciones aparecerán automáticamente
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-destructive mb-2">Error al cargar recomendaciones</p>
+                <p className="text-sm text-muted-foreground">
+                  {error.message}
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>

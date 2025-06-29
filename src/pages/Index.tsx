@@ -6,6 +6,7 @@ import FilterSidebar from "@/components/FilterSidebar";
 import ProductCard from "@/components/ProductCard";
 import ProductModal from "@/components/ProductModal";
 import AIAssistantButton from "@/components/AIAssistantButton";
+import EmbeddingInitializer from "@/components/EmbeddingInitializer";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { getUniqueCategories, getUniqueCompanies, filterProducts } from "@/utils/productHelpers";
 
@@ -52,6 +53,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary/20 to-background">
+      {/* Embedding Initializer */}
+      <EmbeddingInitializer />
+      
       {/* Header */}
       <header className="py-8 px-6">
         <div className="max-w-7xl mx-auto text-center">
