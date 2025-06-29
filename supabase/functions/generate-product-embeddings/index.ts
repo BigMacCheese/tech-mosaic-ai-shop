@@ -79,7 +79,7 @@ serve(async (req) => {
         const productText = `name: ${product.name}, company: ${product.company}, type: ${product.type}, description: ${product.description}, features: ${product.features}, stock: ${product.stock}, price: ${product.price}`;
 
         console.log(`Generating embedding for product: ${product.name}`);
-        console.log(`Product text: ${productText.substring(0, 100)}...`);
+        console.log(`Product text: ${productText}`);
 
         // Generate embedding using OpenAI
         const embeddingResponse = await fetch('https://api.openai.com/v1/embeddings', {

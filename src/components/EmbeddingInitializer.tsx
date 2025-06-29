@@ -15,6 +15,8 @@ const EmbeddingInitializer = () => {
       if (productsWithoutEmbeddings.length > 0) {
         console.log(`Found ${productsWithoutEmbeddings.length} products without embeddings. Generating...`);
         generateEmbeddings({});
+      } else {
+        console.log('All products already have embeddings');
       }
     }
   }, [products, generateEmbeddings]);
