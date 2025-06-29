@@ -141,6 +141,7 @@ const Index = () => {
         product={selectedProduct}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onProductClick={handleProductClick}
       />
 
       {/* Floating AI Assistant Button */}

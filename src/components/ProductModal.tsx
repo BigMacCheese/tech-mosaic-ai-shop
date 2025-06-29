@@ -4,26 +4,28 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DollarSign, Package, Building, ShoppingCart } from "lucide-react";
 import { Product } from "@/hooks/useProducts";
+import ProductRecommendations from "./ProductRecommendations";
 
 interface ProductModalProps {
   product: Product | null;
   isOpen: boolean;
   onClose: () => void;
+  onProductClick?: (product: Product) => void;
 }
 
-const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
+const ProductModal = ({ product, isOpen, onClose, onProductClick }: ProductModalProps) => {
   if (!product) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto glass-effect border-primary/30 z-[60]">
+      <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto glass-effect border-primary/30 z-[60]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-primary">
             {product.name}
           </DialogTitle>
         </DialogHeader>
         
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Product Image */}
           <div className="space-y-4">
             <div className="aspect-square overflow-hidden rounded-lg border border-primary/20">
@@ -88,6 +90,14 @@ const ProductModal = ({ product, isOpen, onClose }: ProductModalProps) => {
               </Button>
             </div>
           </div>
+        </div>
+
+        {/* Product Recommendations */}
+        <div className="border-t border-border/50 pt-8">
+          <ProductRecommendations 
+            productId={product.id}
+            onProductClick={onProductClick}
+          />
         </div>
       </DialogContent>
     </Dialog>
